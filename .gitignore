@@ -1,0 +1,9 @@
+*.log
+._*
+.DS_Store
+.Trashes
+Desktop.ini
+_production/
+node_modules
+bower_components
+TODO.md

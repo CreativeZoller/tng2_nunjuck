@@ -1,0 +1,41 @@
+{
+  "name": "tng2_nunjuck",
+  "version": "0.0.1",
+  "description": "Old TNG2 website re-created with static site-generating and task-automatization",
+  "main": "gulpfile.js",
+  "scripts": {
+    "postinstall": "npm prune",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CreativeZoller/tng2_nunjuck.git"
+  },
+  "keywords": [
+    "recreation",
+    "site",
+    "generating",
+    "task",
+    "automatization",
+    "nunjucks",
+    "gulp",
+    "bower"
+  ],
+  "author": "CreativeZoller",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CreativeZoller/tng2_nunjuck/issues"
+  },
+  "homepage": "https://github.com/CreativeZoller/tng2_nunjuck#readme",
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "del": "^3.0.0",
+    "fs": "0.0.2",
+    "gh-release": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-if": "^2.0.2",
+    "gulp-todo": "^5.4.0",
+    "gulp-util": "^3.0.8",
+    "run-sequence": "^2.0.0"
+  }
+}

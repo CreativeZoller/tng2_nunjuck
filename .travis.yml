@@ -7,5 +7,3 @@ before_install:
   - sh -e /etc/init.d/xvfb start
   - rm -rf node_modulee && rm -rf bower_components
   - npm install -g gulp
-install:
-  - ./install.sh

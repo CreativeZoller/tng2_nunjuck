@@ -42,6 +42,7 @@
     "gulp-nunjucks-render": "^2.2.1",
     "gulp-todo": "^5.4.0",
     "gulp-util": "^3.0.8",
+    "gulp.spritesmith": "^6.5.0",
     "htmlhint-stylish": "^1.0.3",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",

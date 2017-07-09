@@ -30,7 +30,6 @@ var manageEnvironment = function(environment) {
   environment.addGlobal('compileTime', time);
 }
 
-
 gulp.task('nunjucks:generate', function() {
 	plugins.nunjucksRender.nunjucks.configure('./src/nunjucks/templates/');
 	return gulp.src('./src/nunjucks/pages/**/*.+(html|nunjucks)')
@@ -50,7 +49,7 @@ gulp.task('html:lint', function() {
 	return gulp.src('.tmp/_sites/**/*.html')
 		.pipe(plugins.htmlhint('.htmlhintrc'))
 		.on('error', function(err) {
-			notify.onError({ title: 'Html error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+			plugins.notify.onError({ title: 'Html error!', message: '<%= error.message %>', sound: 'Frog' })(err);
 			this.emit('end');
 		})
 		.pipe(plugins.htmlhint.reporter("htmlhint-stylish")) ;
@@ -73,8 +72,39 @@ gulp.task('html:minify', function() {
       useShortDoctype: true
 		}))
 		.on('error', function(err) {
-			notify.onError({ title: 'Minify error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+			plugins.notify.onError({ title: 'Minify error!', message: '<%= error.message %>', sound: 'Frog' })(err);
 			this.emit('end');
 		})
 		.pipe(gulp.dest('./_dist'));
+});
+
+gulp.task('png-sprite:generate', function() {
+  var spritePngs = gulp.src('./src/images/sprites/*.{png,jpg}')
+    .pipe(plugins.spritesmith({
+      algorithm: 'binary-tree',
+      imgName: 'sprites.png',
+      cssName: 'sprites.scss'
+    }))
+    .on('error', function(err) {
+      plugins.notify.onError({ title: 'Png-sprite error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+  		this.emit('end');
+    });
+  spritePngs.img.pipe(gulp.dest('.tmp/images/'));
+  spritePngs.css.pipe(gulp.dest('.tmp/scss/'));
+});
+gulp.task('retina-sprite:generate', function() {
+  var spriteData = gulp.src('./src/images/sprites-2x/*.png')
+    .pipe(plugins.spritesmith({
+      algorithm: 'binary-tree',
+      retinaSrcFilter: './src/images/sprites-2x/*-2x.png',
+      imgName: 'spritesheet.png',
+      retinaImgName: 'retinaSprites.png',
+      cssName: 'retinaSprites.scss'
+    }))
+    .on('error', function(err) {
+      plugins.notify.onError({ title: 'Retina sprite error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+			this.emit('end');
+    });
+  spriteData.img.pipe(gulp.dest('.tmp/images/'));
+  spriteData.css.pipe(gulp.dest('.tmp/scss/'));
 });

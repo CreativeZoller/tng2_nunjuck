@@ -8,12 +8,14 @@ var gulp    = require('gulp'),
         replaceString: /\bgulp[\-.]/
     }),
     taskPath    = './gulptasks/',
-    // gConfig     = require('./gulptasks/gulp-config'),
+    gConfig     = require('./gulptasks/gulp-config'),
     fs          = require('fs'),
-    del         = require('del'),
     runSequence = require('run-sequence'),
     moment      = require('moment'),
     tz          = require('moment-timezone');
+
+require(taskPath + 'clean')(gulp, gConfig, plugins);
+
 function changeEvent(evt) {
 	plugins.gulpUtil.log('File', plugins.gulpUtil.colors.cyan(evt.path.replace(new RegExp('/.*(?=/./)/'), '')), 'was', plugins.gulpUtil.colors.magenta(evt.type));
 }
@@ -28,9 +30,7 @@ var manageEnvironment = function(environment) {
   environment.addGlobal('compileTime', time);
 }
 
-gulp.task('clean', function() {
-	del(['.tmp/**','./_dist/**','./_prod/**']);
-});
+
 gulp.task('nunjucks:generate', function() {
 	plugins.nunjucksRender.nunjucks.configure('./src/nunjucks/templates/');
 	return gulp.src('./src/nunjucks/pages/**/*.+(html|nunjucks)')

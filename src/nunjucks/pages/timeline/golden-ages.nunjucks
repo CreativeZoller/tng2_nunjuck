@@ -1,0 +1,34 @@
+{% extends "src/nunjucks/templates/layout.nunjucks" %}
+
+{% import "src/nunjucks/templates/macros/breadcrumbs.nunjucks" as breadCrumbs %}
+{% import "src/nunjucks/templates/macros/sidemenus.nunjucks" as aside %}
+
+{% set title = 'Star Trek - A Legújabb Nemzedék :: Idõvonal: 2380 - 2393' %}
+{% set description = 'Lorem ipsum dolor sit amet, consectetur.' %}
+{% set keywords = 'legújabb, nemzedék, idõvonal, 2380, 2393' %}
+{% set style = ['main', 'pure', 'animate', 'timeline'] %}
+{% set activePage = 'datas' %}
+
+{% set activeSubPage = 'golden-ages' %}
+{# {% set activeMenus = (navigations.datas["main"], "timeline", navigations.datas["timeline"]) %} #}
+{% set activeCrumbs = breadcrumbs["golden-ages"] %}
+
+{% block content %}
+
+						<aside class="pure-u-1 pure-u-md-1-4">
+							{{ aside.genMenu(navigations.datas["main"], "timeline", navigations.datas["timeline"], activeSubPage) }}
+						</aside>
+						<article class="pure-u-1 pure-u-md-3-4">
+							{{ breadCrumbs.genCrumbs(activeCrumbs) }}
+							<h2 class="content-subhead">Idõvonal: 2380 - 2393</h2>
+							<ol class="content-timeline">
+								{% for entry in contents.timeline["golden-ages"] %}
+								<li>
+									<time>{{ entry.date }}</time>
+									<span>{{ entry.event }}</span>
+								</li>
+								{% endfor %}
+							</ol>
+						</article>
+
+{% endblock %}

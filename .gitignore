@@ -3,7 +3,9 @@
 .DS_Store
 .Trashes
 Desktop.ini
-_production/
+_dist/
+_prod/
+.tmp/
 node_modules
 bower_components
 todo.md

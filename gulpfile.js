@@ -82,8 +82,8 @@ gulp.task('png-sprite:generate', function() {
   var spritePngs = gulp.src('./src/images/sprites/*.{png,jpg}')
     .pipe(plugins.spritesmith({
       algorithm: 'binary-tree',
-      imgName: 'sprites.png',
-      cssName: 'sprites.scss'
+      imgName: 'spritesheet.png',
+      cssName: 'spritesheet.scss'
     }))
     .on('error', function(err) {
       plugins.notify.onError({ title: 'Png-sprite error!', message: '<%= error.message %>', sound: 'Frog' })(err);
@@ -97,7 +97,7 @@ gulp.task('retina-sprite:generate', function() {
     .pipe(plugins.spritesmith({
       algorithm: 'binary-tree',
       retinaSrcFilter: './src/images/sprites-2x/*-2x.png',
-      imgName: 'spritesheet.png',
+      imgName: 'sprites.png',
       retinaImgName: 'retinaSprites.png',
       cssName: 'retinaSprites.scss'
     }))
@@ -107,4 +107,61 @@ gulp.task('retina-sprite:generate', function() {
     });
   spriteData.img.pipe(gulp.dest('.tmp/images/'));
   spriteData.css.pipe(gulp.dest('.tmp/scss/'));
+});
+var pngQuant = require('imagemin-pngquant');
+gulp.task('images:minify', function() {
+  return gulp.src(['./.tmp/images/**','./src/images/*.{png,jpg}'])
+    .pipe(plugins.imagemin({
+      progressive: true,
+      interlaced: true,
+      optimizationLevel: 7,
+      use: [pngQuant()]
+    }))
+    .on('error', function(err) {
+      plugins.notify.onError({ title: 'Image minify error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+  		this.emit('end');
+    })
+    .pipe(gulp.dest('./_dist/images/'));
+});
+
+gulp.task('sass:copy', function() { 
+	return gulp.src('./src/styles/**') 
+		.on('error', function(err) {
+      plugins.notify.onError({ title: 'Sass copy error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+  		this.emit('end');
+		})
+		.pipe(gulp.dest('./.tmp/scss'));
+});
+// TODO: fix this shit
+var sassLint = require('sass-lint');
+gulp.task('sass:lint', function() {
+  return gulp.src('./.tmp/scss/**/*.s+(a|c)ss')
+    // .pipe(sassLint({
+    //   'config': '.sass_lint.yml'
+    // }))
+    .pipe(sassLint())
+    .pipe(sassLint.format())
+    .pipe(sassLint.failOnError())
+});
+//
+gulp.task('sass:compile', function() {
+	return gulp.src(['./.tmp/scss/**/*.scss', '!./.tmp/scss/sprites.scss', '!./.tmp/scss/retinaSprites.scss'])
+		.pipe(plugins.sass())
+		.on('error', function(err) {
+      plugins.notify.onError({ title: 'Sass compile error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+  		this.emit('end');
+		})
+		.pipe(gulp.dest('./.tmp/css/'));
+});
+
+// css tasks
+// js tasks
+
+// build tasks, serve task
+
+// test task
+gulp.task('default', ['clean'], function(done) {
+  runSequence(['clean'], 'nunjucks:generate', 'retina-sprite:generate', 'sass:copy', 'sass:lint', function() {
+    done();
+  });
 });

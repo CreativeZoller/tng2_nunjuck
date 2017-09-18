@@ -12,7 +12,7 @@
     "url": "git+https://github.com/CreativeZoller/tng2_nunjuck.git"
   },
   "keywords": [
-    "recreation",
+    "re-creation",
     "site",
     "generating",
     "task",
@@ -28,12 +28,16 @@
   },
   "homepage": "https://github.com/CreativeZoller/tng2_nunjuck#readme",
   "devDependencies": {
+    "autoprefixer": "^7.1.2",
     "bower": "^1.8.0",
     "del": "^3.0.0",
     "fs": "0.0.2",
     "gh-release": "^3.0.0",
     "gulp": "^3.9.1",
+    "gulp-csscomb": "^3.0.8",
+    "gulp-cssnano": "^2.1.2",
     "gulp-data": "^1.2.1",
+    "gulp-group-css-media-queries": "^1.2.0",
     "gulp-htmlhint": "^0.3.1",
     "gulp-htmlmin": "^3.0.0",
     "gulp-if": "^2.0.2",
@@ -41,15 +45,27 @@
     "gulp-load-plugins": "^1.5.0",
     "gulp-notify": "^3.0.0",
     "gulp-nunjucks-render": "^2.2.1",
+    "gulp-postcss": "^7.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace-task": "^0.11.0",
     "gulp-sass": "^3.1.0",
+    "gulp-scss-lint": "^0.5.0",
     "gulp-todo": "^5.4.0",
     "gulp-util": "^3.0.8",
-    "gulp.spritesmith": "^6.5.0",
+    "gulp.spritesmith": "^6.5.1",
     "htmlhint-stylish": "^1.0.3",
     "imagemin-pngquant": "^5.0.1",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
+    "postcss-discard-comments": "^2.0.4",
+    "postcss-discard-duplicates": "^2.1.0",
+    "postcss-discard-empty": "^2.1.0",
+    "postcss-merge-rules": "^2.1.2",
+    "postcss-ordered-values": "^2.2.3",
     "run-sequence": "^2.0.0",
-    "sass-lint": "^1.10.2"
+    "slushie": "^0.3.1"
+  },
+  "dependencies": {
+    "gulp-cli": "^1.3.0"
   }
 }

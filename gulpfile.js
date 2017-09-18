@@ -108,8 +108,8 @@ gulp.task('retina-sprite:generate', function() {
   spriteData.img.pipe(gulp.dest('.tmp/images/'));
   spriteData.css.pipe(gulp.dest('.tmp/scss/'));
 });
-var pngQuant = require('imagemin-pngquant');
 gulp.task('images:minify', function() {
+  var pngQuant = require('imagemin-pngquant');
   return gulp.src(['./.tmp/images/**','./src/images/*.{png,jpg}'])
     .pipe(plugins.imagemin({
       progressive: true,
@@ -132,20 +132,21 @@ gulp.task('sass:copy', function() { 
 		})
 		.pipe(gulp.dest('./.tmp/scss'));
 });
-// TODO: fix this shit
-var sassLint = require('sass-lint');
 gulp.task('sass:lint', function() {
   return gulp.src('./.tmp/scss/**/*.s+(a|c)ss')
-    // .pipe(sassLint({
-    //   'config': '.sass_lint.yml'
-    // }))
-    .pipe(sassLint())
-    .pipe(sassLint.format())
-    .pipe(sassLint.failOnError())
+    .pipe(plugins.scssLint({
+      'config': '.sass_lint.yml',
+      'reporterOutputFormat': 'Checkstyle',
+      'filePipeOutput': 'scssReport.xml'
+    }))
+      .on('error', function(err) {
+        plugins.notify.onError({ title: 'Sass lint error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+    		this.emit('end');
+      })
+    .pipe(gulp.dest('./.tmp/scss/'));
 });
-//
 gulp.task('sass:compile', function() {
-	return gulp.src(['./.tmp/scss/**/*.scss', '!./.tmp/scss/sprites.scss', '!./.tmp/scss/retinaSprites.scss'])
+	return gulp.src(['./.tmp/scss/**/*.scss'])
 		.pipe(plugins.sass())
 		.on('error', function(err) {
       plugins.notify.onError({ title: 'Sass compile error!', message: '<%= error.message %>', sound: 'Frog' })(err);
@@ -153,15 +154,74 @@ gulp.task('sass:compile', function() {
 		})
 		.pipe(gulp.dest('./.tmp/css/'));
 });
+gulp.task('fix:retinaCss', function() {
+  return gulp.src('.tmp/css/retinaSprites.css')
+    .pipe(plugins.replaceTask({
+      patterns: [{
+				match: /sprite/g,
+				replacement: '../images/sprite'
+			}]
+    }))
+      .on('error', function(err) {
+        plugins.notify.onError({ title: 'Retina fix error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+    		this.emit('end');
+      })
+    .pipe(gulp.dest('./_dist/css/'));
+});
+gulp.task('fix:css', function() {
+    var autoprefixer = require('autoprefixer');
+    return gulp.src(['.tmp/css/*.css', '!.tmp/css/*.min.css'])
+        .pipe(plugins.postcss([autoprefixer({
+          browsers: ['> 80% in HU', 'last 2 Chrome versions',
+                  'last 2 Firefox versions', 'last 2 Opera versions',
+                  'last 2 Safari versions', 'not ie <= 10']
+          })]
+        ))
+        .on('error', function(err) {
+          plugins.notify.onError({ title: 'CSS fix error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+      		this.emit('end');
+        })
+        .pipe(plugins.csscomb({
+          config: 'csscomb.json'
+        }))
+        .on('error', function(err) {
+          plugins.notify.onError({ title: 'CSS Reorder error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+      		this.emit('end');
+        })
+        .pipe(gulp.dest('./_dist/css/'));
+});
+gulp.task('minify:css', function() {
+  return gulp.src(['./_dist/css/*.css', '!./_dist/css/*.min.css'])
+    .pipe(plugins.groupCssMediaQueries())
+    .on('error', function(err) {
+      plugins.notify.onError({ title: 'Media Query Reorder error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+      this.emit('end');
+    })
+    .pipe(plugins.cssnano({
+      discardComments: true,
+      mergeRules: true,
+      orderedValues: true,
+      discardDuplicates: true,
+      discardEmpty: true
+    }))
+    .pipe(plugins.rename({suffix: '.min'}))
+    .pipe(gulp.dest('./_dist/css/'))
+    .on('error', function(err) {
+      plugins.notify.onError({ title: 'CSS Minify error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+      this.emit('end');
+    });
+});
 
-// css tasks
 // js tasks
+
+// TODO: html inject after ultron
 
 // build tasks, serve task
 
 // test task
 gulp.task('default', ['clean'], function(done) {
-  runSequence(['clean'], 'nunjucks:generate', 'retina-sprite:generate', 'sass:copy', 'sass:lint', function() {
+  runSequence(['clean'], 'nunjucks:generate', 'html:lint', 'html:minify', 'retina-sprite:generate', 'sass:copy', 'sass:lint', 'sass:compile', 'fix:retinaCss', 'fix:css', 'minify:css', function() {
+  //runSequence(['clean'], 'retina-sprite:generate', 'sass:copy', 'sass:lint', 'sass:compile', 'fix:retinaCss', 'fix:css', 'minify:css', function() {
     done();
   });
 });

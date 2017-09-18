@@ -8,7 +8,7 @@
 @import 'pure_unique';
 
 // importing gulp-generated scss-files
-// @import 'sprites';
+//@import 'sprites';
 @import 'retinaSprites';
 
 // local definitions
@@ -37,4 +37,8 @@ textarea,
   &-twitter {
     @include retina-sprite($twitter-group);
   }
+}
+
+.social {
+  background-color: rgba(0, 0, 0, 0);
 }

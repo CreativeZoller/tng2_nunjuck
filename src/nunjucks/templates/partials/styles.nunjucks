@@ -1,9 +1,11 @@
 {% block styles %}
 	{% for css in style %}
-		{% if activeSubPage != '' %}
-		<link rel="stylesheet" href="../style/{{ css }}.css" />
+		{% if activeSubPage %}
+		<link rel="preload" href="../css/{{ css }}.css" as="style">
+		<link rel="stylesheet" href="../css/{{ css }}.css" />
 		{% else %}
-		<link rel="stylesheet" href="style/{{ css }}.css" />
+		<link rel="preload" href="css/{{ css }}.css" as="style">
+		<link rel="stylesheet" href="css/{{ css }}.css" />
 		{% endif %}
 		{# <script src="{{ assets }}javascript/{{script}}.js" async defer></script> #}
 	{% endfor %}

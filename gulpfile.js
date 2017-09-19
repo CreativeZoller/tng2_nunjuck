@@ -211,17 +211,30 @@ gulp.task('minify:css', function() {
       this.emit('end');
     });
 });
-
-// js tasks
-
 // TODO: html inject after ultron
-
-// build tasks, serve task
+gulp.task('inject:html', function() {
+  return gulp.src('./_dist/**/*.html')
+    .pipe(plugins.inject(gulp.src(['./_dist/js/*.min.js', './_dist/css/*.min.css'], {read: true}), {relative: true}))
+    .pipe(plugins.replaceTask({
+      patterns: [{
+          match: /.css">/g,
+          replacement: function () {
+            return '.css" />';
+          }
+        }]
+    }))
+    .on('error', function(err) {
+      plugins.notify.onError({ title: 'Html inject error!', message: '<%= error.message %>', sound: 'Frog' })(err);
+      this.emit('end');
+    })
+    .pipe(gulp.dest('./_dist/'));
+});
+// TODO: regroup tasks to external files
 
 // test task
 gulp.task('default', ['clean'], function(done) {
-  runSequence(['clean'], 'nunjucks:generate', 'html:lint', 'html:minify', 'retina-sprite:generate', 'sass:copy', 'sass:lint', 'sass:compile', 'fix:retinaCss', 'fix:css', 'minify:css', function() {
-  //runSequence(['clean'], 'retina-sprite:generate', 'sass:copy', 'sass:lint', 'sass:compile', 'fix:retinaCss', 'fix:css', 'minify:css', function() {
+  //runSequence(['clean'], 'nunjucks:generate', 'html:lint', 'html:minify', 'retina-sprite:generate', 'sass:copy', 'sass:lint', 'sass:compile', 'fix:retinaCss', 'fix:css', 'minify:css', function() {
+  runSequence(['clean'], 'retina-sprite:generate', 'sass:copy', 'sass:lint', 'sass:compile', 'fix:retinaCss', 'fix:css', 'minify:css', 'nunjucks:generate', 'inject:html', 'html:lint', 'html:minify', function() {
     done();
   });
 });

@@ -14,7 +14,7 @@ var gulp    = require('gulp'),
     moment      = require('moment'),
     tz          = require('moment-timezone');
 
-require(taskPath + 'clean')(gulp, gConfig, plugins);
+require(taskPath + 'cleanings')(gulp, gConfig, plugins);
 
 function changeEvent(evt) {
 	plugins.gulpUtil.log('File', plugins.gulpUtil.colors.cyan(evt.path.replace(new RegExp('/.*(?=/./)/'), '')), 'was', plugins.gulpUtil.colors.magenta(evt.type));
@@ -211,7 +211,7 @@ gulp.task('minify:css', function() {
       this.emit('end');
     });
 });
-// TODO: html inject after ultron
+
 gulp.task('inject:html', function() {
   return gulp.src('./_dist/**/*.html')
     .pipe(plugins.inject(gulp.src(['./_dist/js/*.min.js', './_dist/css/*.min.css'], {read: true}), {relative: true}))
@@ -229,12 +229,13 @@ gulp.task('inject:html', function() {
     })
     .pipe(gulp.dest('./_dist/'));
 });
-// TODO: regroup tasks to external files
+// TODO: regroup tasks to external files, reformat them to get attributes 
+// and be more re-usable
 
 // test task
-gulp.task('default', ['clean'], function(done) {
-  //runSequence(['clean'], 'nunjucks:generate', 'html:lint', 'html:minify', 'retina-sprite:generate', 'sass:copy', 'sass:lint', 'sass:compile', 'fix:retinaCss', 'fix:css', 'minify:css', function() {
-  runSequence(['clean'], 'retina-sprite:generate', 'sass:copy', 'sass:lint', 'sass:compile', 'fix:retinaCss', 'fix:css', 'minify:css', 'nunjucks:generate', 'inject:html', 'html:lint', 'html:minify', function() {
+gulp.task('default', function(done) {
+  //runSequence('retina-sprite:generate', 'sass:copy', 'sass:lint', 'sass:compile', 'fix:retinaCss', 'fix:css', 'minify:css', 'nunjucks:generate', 'inject:html', 'html:lint', 'html:minify', function() {
+  runSequence('retina-sprite:generate', 'sass:copy', 'sass:lint', 'sass:compile', 'fix:retinaCss', 'fix:css', 'minify:css', 'nunjucks:generate', 'inject:html', 'html:lint', function() {
     done();
   });
 });
